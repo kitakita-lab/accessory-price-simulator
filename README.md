@@ -126,48 +126,44 @@ npm run dev
 
 ## GitHub Pages への公開方法
 
-### 方法1：手動デプロイ（gh-pagesパッケージを使用）
+`.github/workflows/deploy.yml` が同梱済みです。以下の手順だけで自動デプロイが有効になります。
+
+### 手順
+
+**1. リポジトリの Pages 設定を変更する**
+
+GitHub リポジトリの **Settings → Pages → Source** を  
+`Deploy from a branch` から **`GitHub Actions`** に変更してください。
+
+**2. main ブランチへ push する**
 
 ```bash
-# gh-pages パッケージをインストール
-npm install --save-dev gh-pages
-
-# package.json の scripts に追加
-# "deploy": "gh-pages -d dist"
-
-# ビルドしてデプロイ
-npm run build
-npm run deploy
+git push origin main
 ```
 
-### 方法2：GitHub Actions（自動デプロイ）
+push をトリガーに GitHub Actions が起動し、自動で `npm run build` → `dist/` を Pages へデプロイします。
 
-`.github/workflows/deploy.yml` を作成：
+公開 URL の例：`https://<ユーザー名>.github.io/accessory-price-simulator/`
 
-```yaml
-name: Deploy to GitHub Pages
+### 手動実行
 
-on:
-  push:
-    branches: [main]
+Actions タブ → **Deploy to GitHub Pages** → **Run workflow** で任意のタイミングで実行できます。
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm install
-      - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+### workflow の概要
+
+```
+push to main
+  └─ build job
+       ├─ actions/checkout@v4
+       ├─ actions/setup-node@v4  (Node 20 / npm cache 有効)
+       ├─ npm ci
+       ├─ npm run build
+       └─ actions/upload-pages-artifact@v3  (dist/ をアップロード)
+  └─ deploy job
+       └─ actions/deploy-pages@v4  (GitHub Pages へデプロイ)
 ```
 
-GitHubリポジトリの Settings → Pages → Source を `gh-pages` ブランチに設定してください。
+`gh-pages` ブランチは不要です。`dist/` ディレクトリも git 管理不要です。
 
 ---
 
