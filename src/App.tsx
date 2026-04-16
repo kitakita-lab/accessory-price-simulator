@@ -83,6 +83,7 @@ function NumberInput({ label, value, onChange, unit = '円', min = 0, hint }: Nu
       <div className="field-input-wrap">
         <input
           type="number"
+          inputMode="decimal"
           className="field-input"
           value={value === 0 ? '' : value}
           placeholder="0"
@@ -273,6 +274,7 @@ export default function App() {
                 <div className="field-input-wrap">
                   <input
                     type="number"
+                    inputMode="decimal"
                     className="field-input"
                     value={Math.round(form.idealProfitRate * 100)}
                     placeholder="30"
@@ -350,6 +352,7 @@ export default function App() {
           {/* ===== 結果エリア ===== */}
           <div className="result-area">
             <div className="result-sticky">
+              <p className="result-heading">📊 計算結果</p>
 
               {!canCalculate && (
                 <div className="warning-box">
